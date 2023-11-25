@@ -13,7 +13,21 @@ const router = createRouter({
         },
         {
           path:"/home",
-          component:()=>import("@/views/home/home.vue")
+          component:()=>import("@/views/home/home.vue"),
+          children:([
+            {
+              path:"",
+              component:()=>import("@/views/home/component/increase.vue")
+            },
+            {
+              path:"/increase",
+              component:()=>import("@/views/home/component/increase.vue")
+            },
+            {
+              path:"/deal",
+              component:()=>import("@/views/home/component/deal.vue")
+            }
+          ])
         },
         {
           path:"/quote",

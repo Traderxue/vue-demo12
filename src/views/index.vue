@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import {showToast} from "vant"
+import { showToast } from "vant";
 
 const active = ref(0);
 
@@ -8,7 +8,7 @@ const loading = ref(false);
 
 const onRefresh = () => {
   setTimeout(() => {
-    window.location.reload()
+    window.location.reload();
     showToast("刷新成功");
     loading.value = false;
   }, 1000);
@@ -33,6 +33,11 @@ const onRefresh = () => {
       <van-tabbar-item to="/quote">
         <span class="material-symbols-outlined"> monitoring </span><br />
         <span>行情</span>
+      </van-tabbar-item>
+      <van-tabbar-item to="/contract">
+        <span class="material-symbols-outlined"> list_alt </span>
+        <br>
+        <span>合约</span>
       </van-tabbar-item>
       <van-tabbar-item to="/wallet">
         <span class="material-symbols-outlined"> account_balance_wallet </span

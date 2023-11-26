@@ -3,6 +3,8 @@ import { ref } from "vue";
 
 import { useRouter } from "vue-router";
 
+const showLeft = ref(false);
+
 const route = useRouter();
 
 const value = ref(10);
@@ -10,6 +12,13 @@ const value = ref(10);
 const activeBtn = ref("买入");
 
 const position = ref(true);
+
+const current = ref({
+  type: "BTC",
+  price: "23462",
+  parcent: "1.6%",
+  up: 1,
+});
 
 const leftData = ref([
   {
@@ -46,25 +55,76 @@ const positionList = ref([
     type: "BTC",
     direction: 1,
     price: "26346",
-    income:3114
+    income: 3114,
   },
   {
     type: "ETH",
     direction: 1,
     price: "2346",
-    income:244
+    income: 244,
   },
   {
     type: "DOGE",
     direction: 0,
     price: "0.046",
-    income:123
+    income: 123,
   },
   {
     type: "APE",
     direction: 1,
     price: "4.16",
-    income:464
+    income: 464,
+  },
+]);
+
+const listData = ref([
+  {
+    type: "BTC",
+    price: "32465.12",
+    parcent: "+1.4%",
+    up: 1,
+  },
+  {
+    type: "ETH",
+    price: "1654.15",
+    parcent: "-0.14%",
+    up: 1,
+  },
+  {
+    type: "DOGE",
+    price: "0.0134",
+    parcent: "+1.55%",
+    up: 0,
+  },
+  {
+    type: "APE",
+    price: "3.14",
+    parcent: "-1.8%",
+    up: 0,
+  },
+  {
+    type: "BTC",
+    price: "32465.12",
+    parcent: "+1.4%",
+    up: 1,
+  },
+  {
+    type: "ETH",
+    price: "1654.15",
+    parcent: "-0.14%",
+    up: 0,
+  },
+  {
+    type: "DOGE",
+    price: "0.0134",
+    parcent: "+1.55%",
+    up: 1,
+  },
+  {
+    type: "APE",
+    price: "3.14",
+    parcent: "-1.8%",
+    up: 1,
   },
 ]);
 
@@ -72,9 +132,18 @@ const clickBtn = (item) => {
   activeBtn.value = item.title;
 };
 
-const goAll = () =>{
-  route.push("/all")
-}
+const goAll = () => {
+  route.push("/all");
+};
+
+const showList = () => {
+  showLeft.value = true;
+};
+
+const changeCurrent = (item) => {
+  current.value = item;
+  showLeft.value = false;
+};
 </script>
 
 
@@ -85,8 +154,32 @@ const goAll = () =>{
     </div>
     <div class="top">
       <div class="div1">
-        <span>BTC/USDT</span>
-        <p>+2.1%</p>
+        <span class="material-symbols-outlined reorder" @click="showList">
+          menu
+        </span>
+        <van-popup
+          v-model:show="showLeft"
+          position="left"
+          :style="{ width: '70%', height: '100%', background: '#2d4059' }"
+        >
+          <div class="leftList">
+            <div
+              v-for="(item, index) in listData"
+              :key="index"
+              @click="changeCurrent(item)"
+            >
+              <span>{{ item.type }}/USDT</span>
+              <span :class="item.up == 1 ? 'up' : 'down'">{{
+                item.price
+              }}</span>
+              <span :class="item.up == 1 ? 'up' : 'down'">{{
+                item.parcent
+              }}</span>
+            </div>
+          </div>
+        </van-popup>
+        <span>{{ current.type }}/USDT</span>
+        <p :class="current.up == 1 ? 'up' : 'down'">{{ current.parcent }}</p>
       </div>
       <div>
         <span class="material-symbols-outlined"> candlestick_chart </span>
@@ -140,13 +233,15 @@ const goAll = () =>{
     <div class="entrust">
       <span>当前持仓</span>
       <div>
-        <span class="material-symbols-outlined description" @click="goAll"> description </span>
+        <span class="material-symbols-outlined description" @click="goAll">
+          description
+        </span>
         <span>全部</span>
       </div>
     </div>
     <div class="position">
       <div v-if="position">
-        <div class="per" v-for="(item,index) in positionList" :key="index">
+        <div class="per" v-for="(item, index) in positionList" :key="index">
           <div>
             <span>种类</span>
             <span>方向</span>
@@ -154,10 +249,14 @@ const goAll = () =>{
             <span>收益</span>
           </div>
           <div>
-            <span>{{item.type}}/USDT</span>
-            <span :class="item.direction==1?'many':'null'">{{item.direction==1?'多':'空'}}</span>
-            <span>{{item.price}}</span>
-            <span :class="item.direction==1?'many':'null'">{{item.income}}</span>
+            <span>{{ item.type }}/USDT</span>
+            <span :class="item.direction == 1 ? 'many' : 'null'">{{
+              item.direction == 1 ? "多" : "空"
+            }}</span>
+            <span>{{ item.price }}</span>
+            <span :class="item.direction == 1 ? 'many' : 'null'">{{
+              item.income
+            }}</span>
           </div>
           <div>
             <button>止盈止损</button>
@@ -188,7 +287,35 @@ const goAll = () =>{
     .div1 {
       display: flex;
       justify-content: space-around;
-      align-items: baseline;
+      align-items: center;
+      .up {
+        color: #00b8a9;
+      }
+      .down {
+        color: #e84545;
+      }
+      .leftList {
+        padding: 15px;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        div {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0px;
+          margin: 10px 0px;
+          .up {
+            color: #00b8a9;
+          }
+          .down {
+            color: #e84545;
+          }
+        }
+      }
+      .reorder {
+        margin-right: 5px;
+        font-size: 22px;
+      }
       span {
         font-size: 14px;
         font-weight: 600;

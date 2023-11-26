@@ -23,7 +23,7 @@ const onRefresh = () => {
     <van-tabbar
       v-model="active"
       inactive-color="#f5f5f5"
-      active-color="#3ec1d3"
+      active-color="#00b8a9"
       route
     >
       <van-tabbar-item to="/home">

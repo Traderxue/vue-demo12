@@ -61,6 +61,10 @@ const router = createRouter({
         }
       ])
     },
+    {
+      path:"/all",
+      component:()=>import("@/views/contract/all.vue")
+    }
   ]
 })
 

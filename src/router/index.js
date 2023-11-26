@@ -64,6 +64,10 @@ const router = createRouter({
     {
       path:"/all",
       component:()=>import("@/views/contract/all.vue")
+    },
+    {
+      path:"/verify",
+      component:()=>import("@/views/mine/component/verify.vue")
     }
   ]
 })

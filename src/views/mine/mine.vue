@@ -1,36 +1,50 @@
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const navList = ref([
   {
     icon: "http://localhost:5173/icon_5.png",
     title: "实名认证",
+    path:"/verify"
   },
   {
     icon: "http://localhost:5173/icon_1.png",
     title: "安全中心",
+    path:"/security"
   },
   {
     icon: "http://localhost:5173/icon_3.png",
     title: "银行卡管理",
+    path:"/card"
   },
   {
     icon: "http://localhost:5173/icon_2.png",
     title: "仓位记录",
+    path:"/position"
   },
   {
     icon: "http://localhost:5173/icon_7.png",
     title: "区块管理",
+    path:"/block"
   },
   {
     icon: "http://localhost:5173/icon_6.png",
     title: "版本更新",
+    path:"/version"
   },
   {
     icon: "http://localhost:5173/icon_4.png",
     title: "设置",
+    path:"/setting"
   },
 ]);
+
+const goTabs = (item) =>{
+  router.push(item.path)
+}
 </script>
 
 <template>
@@ -44,7 +58,7 @@ const navList = ref([
       <span>信用分: 100</span>
     </div>
     <div class="box">
-      <div class="per" v-for="(item, index) in navList" :key="index">
+      <div class="per" v-for="(item, index) in navList" :key="index" @click="goTabs(item)">
         <div>
           <img :src="item.icon" alt="" />
           <span>{{ item.title }}</span>

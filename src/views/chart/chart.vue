@@ -63,7 +63,6 @@ const goBack = () => {
 
 const getBannerData = async () => {
   const { data: res } = await getDetail(type);
-  console.log(res);
   bannerList.value.current = res.tick.close;
   bannerList.value.vol = parseFloat(res.tick.vol).toFixed(2);
   bannerList.value.high = res.tick.high;
@@ -95,10 +94,18 @@ const dataList = ref([]);
 const klineData = async () => {
   const { data: res } = await getKline(type, active.value);
   res.data.forEach((item) => {
-    item.timestamp = item.id;
-    item.volume = item.vol;
+    dataList.value.push(
+      {
+        close: item.close,
+        high: item.high,
+        low: item.low,
+        open: item.open,
+        timestamp: item.id,
+        volume: item.vol,
+      },
+    );
   });
-  dataList.value = res.data;
+  console.log(dataList.value)
 };
 
 onMounted(() => {
@@ -112,16 +119,16 @@ onMounted(() => {
 
   charts.applyNewData(dataList.value);
 
-  charts.applyNewData([
-    {
-      close: 4976.16,
-      high: 4977.99,
-      low: 4970.12,
-      open: 4972.89,
-      timestamp: 1587660000000,
-      volume: 204,
-    },
-  ]);
+  //   charts.applyNewData([
+  //     {
+  //       close: 4976.16,
+  //       high: 4977.99,
+  //       low: 4970.12,
+  //       open: 4972.89,
+  //       timestamp: 1587660000000,
+  //       volume: 204,
+  //     },
+  //   ]);
 });
 </script>
 

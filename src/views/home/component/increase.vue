@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getDetail } from "@/api/coin.js";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const typeList = ref([
   {
@@ -59,6 +62,13 @@ const getData = () => {
   })
 };
 
+const goChart = (item)=>{
+  router.push({
+    path:"/chart",
+    query:item
+  })
+}
+
 onMounted(() => {
   getData()
 });
@@ -70,7 +80,7 @@ setInterval(()=>{
 
 <template>
   <div class="increase">
-    <div v-for="(item, index) in typeList" :key="index">
+    <div v-for="(item, index) in typeList" :key="index" @click="goChart(item)">
       <span class="span1"
         >{{ item.type.toUpperCase() }}
         <p>/USDT</p></span

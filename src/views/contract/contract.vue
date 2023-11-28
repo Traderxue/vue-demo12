@@ -136,7 +136,6 @@ const changeCurrent = (item) => {
 
 const getData = async () => {
   const { data: res } = await getDepth(current.value.type);
-  console.log(res);
   bids.value = res.tick.bids;
   asks.value = res.tick.asks;
 };

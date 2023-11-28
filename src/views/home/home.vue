@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import i18n from "@/lang/index.js";
 import { useRouter } from "vue-router";
+import { getDetail } from "@/api/coin.js";
 
 const route = useRouter();
 
@@ -70,24 +71,24 @@ const langList = ref([
 
 const tabList = ref([
   {
-    type: "BTC",
-    price: "23468.5",
-    parcent: "+1.18%",
-    price_cny: "67845.45",
-    up: 1,
+    type: "btc",
+    price: "",
+    parcent: "",
+    price_cny: "",
+    up: 0,
   },
   {
-    type: "ETH",
-    price: "1346.5",
-    parcent: "+2.8%",
-    price_cny: "4845.45",
-    up: 1,
+    type: "eth",
+    price: "",
+    parcent: "",
+    price_cny: "",
+    up: 0,
   },
   {
-    type: "BCH",
-    price: "284.5",
-    parcent: "-1.18%",
-    price_cny: "17845.45",
+    type: "bch",
+    price: "",
+    parcent: "",
+    price_cny: "",
     up: 0,
   },
 ]);
@@ -110,6 +111,27 @@ const dealDataList = (item)=>{
     active.value = item.title
     route.push(item.path)
 }
+
+const getData = () => {
+  tabList.value.forEach(async item => {
+    const { data: res } = await getDetail(item.type);
+    console.log(res)
+    item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
+    item.price = res.tick.close
+    item.price_cny = parseFloat(item.price).toFixed(2)*7
+    if(parseFloat(item.parcent)>0){
+      item.up=1
+    }
+  })
+};
+
+onMounted(()=>{
+  getData()
+})
+
+setInterval(()=>{
+  getData()
+},1000*15)
 </script>
 
 <template>
@@ -183,14 +205,14 @@ const dealDataList = (item)=>{
     />
     <div class="tab">
       <div v-for="(item, index) in tabList" :key="index">
-        <span class="span1">{{ item.type }}/USDT</span>
+        <span class="span1">{{ item.type.toUpperCase() }}/USDT</span>
         <span class="span2" :class="item.up == 1 ? 'up' : 'down'">{{
-          item.price
+          parseFloat(item.price).toFixed(2)
         }}</span>
         <span class="span3" :class="item.up == 1 ? 'up' : 'down'">{{
-          item.parcent
-        }}</span>
-        <span class="span4">≈ {{ item.price_cny }} CNY</span>
+          parseFloat(item.parcent).toFixed(2)
+        }}%</span>
+        <span class="span4">≈ {{ parseFloat(item.price_cny).toFixed(2) }} CNY</span>
       </div>
     </div>
     <div class="quickly">

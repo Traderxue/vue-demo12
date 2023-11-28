@@ -1,54 +1,87 @@
 <script setup>
-import { ref } from "vue";
-import {getDetail} from "@/api/coin.js"
+import { onMounted, ref } from "vue";
+import { getDetail } from "@/api/coin.js";
 
-const dataList = ref([
+const typeList = ref([
   {
-    type: "BTC",
-    price: "26485.21",
-    parcent: "+1.89%",
-    up: 1,
+    type:"btc",
+    price:"",
+    parcent:"",
+    up:0
   },
   {
-    type: "ETH",
-    price: "2136",
-    parcent: "+2.89%",
-    up: 1,
+    type:"eth",
+    price:"",
+    parcent:"",
+    up:0
   },
   {
-    type: "APE",
-    price: "1.41",
-    parcent: "-2.10%",
-    up: 0,
+    type:"sol",
+    price:"",
+    parcent:"",
+    up:0
   },
   {
-    type: "SOL",
-    price: "57.45",
-    parcent: "-2.15%",
-    up: 0,
+    type:"doge",
+    price:"",
+    parcent:"",
+    up:0
   },
   {
-    type: "DOGE",
-    price: "0.024",
-    parcent: "+1.64%",
-    up: 1,
+    type:"aca",
+    price:"",
+    parcent:"",
+    up:0
   },
+  {
+    type:"stc",
+    price:"",
+    parcent:"",
+    up:0
+  },
+  {
+    type:"atom",
+    price:"",
+    parcent:"",
+    up:0
+  }
+
 ]);
+
+const getData = () => {
+  typeList.value.forEach(async item => {
+    const { data: res } = await getDetail(item.type);
+    console.log(res)
+    item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
+    item.price = res.tick.close
+    if(parseFloat(item.parcent)>0){
+      item.up=1
+    }
+  })
+};
+
+onMounted(() => {
+  getData()
+});
+
+setInterval(()=>{
+  getData()
+},1000*10)
 </script>
 
 <template>
   <div class="increase">
-    <div v-for="(item, index) in dataList" :key="index">
+    <div v-for="(item, index) in typeList" :key="index">
       <span class="span1"
-        >{{ item.type }}
+        >{{ item.type.toUpperCase() }}
         <p>/USDT</p></span
       >
-      <span class="span2" :class="item.up == 1 ? 'up' : 'down'">{{
+      <span class="span2" :class="item.up == '1' ? 'up' : 'down'">{{
         item.price
       }}</span>
       <span class="span3">
-        <button :class="item.up == 1 ? 'up_btn' : 'down_btn'">
-          {{ item.parcent }}
+        <button :class="item.up == '1' ? 'up_btn' : 'down_btn'">
+          {{ parseFloat(item.parcent).toFixed(2)}}%
         </button>
       </span>
     </div>

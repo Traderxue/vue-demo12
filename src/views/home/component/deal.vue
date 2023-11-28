@@ -1,42 +1,64 @@
 <script setup>
 import { ref } from "vue";
+import { getDetail } from "@/api/coin.js";
+import { onMounted } from "vue";
 
-const dataList = ref([
+const typeList = ref([
  
   {
-    type: "ETH",
-    price: "2136",
-    parcent: "+2.89%",
-    up: 1,
-  },
-  {
-    type: "APE",
-    price: "1.41",
-    parcent: "-2.10%",
+    type: "eth",
+    price: "",
+    parcent: "",
     up: 0,
   },
   {
-    type: "BTC",
-    price: "26485.21",
-    parcent: "+1.89%",
-    up: 1,
+    type: "ape",
+    price: "",
+    parcent: "",
+    up: 0,
+  },
+  {
+    type: "clv",
+    price: "",
+    parcent: "",
+    up: 0,
   },
 ]);
+
+const getData = () => {
+  typeList.value.forEach(async item => {
+    const { data: res } = await getDetail(item.type);
+    console.log(res)
+    item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
+    item.price = res.tick.close
+    if(parseFloat(item.parcent)>0){
+      item.up=1
+    }
+  })
+};
+
+onMounted(() => {
+  getData()
+});
+
+setInterval(()=>{
+  getData()
+},1000*50)
 </script>
 
 <template>
   <div class="deals">
-    <div v-for="(item, index) in dataList" :key="index">
+    <div v-for="(item, index) in typeList" :key="index">
       <span class="span1"
-        >{{ item.type }}
+        >{{ item.type.toUpperCase() }}
         <p>/USDT</p></span
       >
       <span class="span2" :class="item.up == 1 ? 'up' : 'down'">{{
-        item.price
+        parseFloat(item.price).toFixed(2)
       }}</span>
       <span class="span3">
         <button :class="item.up == 1 ? 'up_btn' : 'down_btn'">
-          {{ item.parcent }}
+          {{ parseFloat(item.parcent).toFixed(2) }}%
         </button>
       </span>
     </div>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import {getDetail} from "@/api/coin.js"
 
 const dataList = ref([
   {

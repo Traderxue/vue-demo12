@@ -11,6 +11,8 @@ const type = route.query.type;
 
 const chart = ref(null);
 
+const active = ref("1min");
+
 const bannerList = ref({
   current: "",
   vol: "",
@@ -20,34 +22,38 @@ const bannerList = ref({
   up: 0,
 });
 
+const changeTime = (item) => {
+  active.value = item.time;
+};
+
 const timeList = ref([
   {
     time: "1M",
-    period:"1min"
+    period: "1min",
   },
   {
     time: "5M",
-    period:"5min"
+    period: "5min",
   },
   {
     time: "15M",
-    period:"15min"
+    period: "15min",
   },
   {
     time: "30M",
-    period:"30min"
+    period: "30min",
   },
   {
     time: "1H",
-    period:"60min"
+    period: "60min",
   },
   {
     time: "4H",
-    period:"4hour"
+    period: "4hour",
   },
   {
     time: "1D",
-    period:"1day"
+    period: "1day",
   },
 ]);
 
@@ -84,13 +90,27 @@ const option = {
   },
 };
 
+const dataList = ref([]);
+
+const klineData = async () => {
+  const { data: res } = await getKline(type, active.value);
+  res.data.forEach((item) => {
+    item.timestamp = item.id;
+    item.volume = item.vol;
+  });
+  dataList.value = res.data;
+};
+
 onMounted(() => {
   getBannerData();
+  klineData();
   console.log(route.query);
 
   charts = init(chart.value);
 
-  charts.setStyles(option)
+  charts.setStyles(option);
+
+  charts.applyNewData(dataList.value);
 
   charts.applyNewData([
     {
@@ -100,78 +120,6 @@ onMounted(() => {
       open: 4972.89,
       timestamp: 1587660000000,
       volume: 204,
-    },
-    {
-      close: 4977.33,
-      high: 4979.94,
-      low: 4971.34,
-      open: 4973.2,
-      timestamp: 1587660060000,
-      volume: 194,
-    },
-    {
-      close: 4977.93,
-      high: 4977.93,
-      low: 4974.2,
-      open: 4976.53,
-      timestamp: 1587660120000,
-      volume: 197,
-    },
-    {
-      close: 4966.77,
-      high: 4968.53,
-      low: 4962.2,
-      open: 4963.88,
-      timestamp: 1587660180000,
-      volume: 28,
-    },
-    {
-      close: 4961.56,
-      high: 4972.61,
-      low: 4961.28,
-      open: 4961.28,
-      timestamp: 1587660240000,
-      volume: 184,
-    },
-    {
-      close: 4964.19,
-      high: 4964.74,
-      low: 4961.42,
-      open: 4961.64,
-      timestamp: 1587660300000,
-      volume: 191,
-    },
-    {
-      close: 4968.93,
-      high: 4972.7,
-      low: 4964.55,
-      open: 4966.96,
-      timestamp: 1587660360000,
-      volume: 105,
-    },
-    {
-      close: 4979.31,
-      high: 4979.61,
-      low: 4973.99,
-      open: 4977.06,
-      timestamp: 1587660420000,
-      volume: 35,
-    },
-    {
-      close: 4977.02,
-      high: 4981.66,
-      low: 4975.14,
-      open: 4981.66,
-      timestamp: 1587660480000,
-      volume: 135,
-    },
-    {
-      close: 4985.09,
-      high: 4988.62,
-      low: 4980.3,
-      open: 4986.72,
-      timestamp: 1587660540000,
-      volume: 76,
     },
   ]);
 });
@@ -203,7 +151,13 @@ onMounted(() => {
       </div>
     </div>
     <div class="time">
-      <span v-for="(item,index) in timeList" :key="index">{{item.time}}</span>
+      <span
+        v-for="(item, index) in timeList"
+        :key="index"
+        :class="active == item.time ? 'active' : ''"
+        @click="changeTime(item)"
+        >{{ item.time }}</span
+      >
     </div>
     <div class="chart_box">
       <div ref="chart" style="width: 100%; height: 500px"></div>
@@ -256,11 +210,14 @@ onMounted(() => {
       color: #e84545;
     }
   }
-  .time{
+  .time {
     padding: 10px 0px;
     margin: 15px 0px;
     display: flex;
     justify-content: space-around;
+    .active {
+      color: #3490de;
+    }
   }
 }
 </style>

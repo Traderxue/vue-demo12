@@ -197,12 +197,12 @@ setInterval(()=>{
         <div class="box">
           <div v-for="(item, index) in bids" :key="index">
             <span class="span1">{{ item[0] }}</span
-            ><span>{{ item[1] }}</span>
+            ><span>{{ parseFloat(item[1]).toFixed(3) }}</span>
           </div>
           <span class="mid">{{}}</span>
           <div v-for="(item, index) in asks" :key="index">
             <span class="span2">{{ item[0] }}</span
-            ><span>{{ item[1] }}</span>
+            ><span>{{ parseFloat(item[1]).toFixed(3) }}</span>
           </div>
         </div>
       </div>

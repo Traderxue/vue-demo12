@@ -1,92 +1,114 @@
 <script setup>
 import { ref } from "vue";
+import { getDetail } from "@/api/coin.js";
+import { onMounted } from "vue";
 
 const dataList = ref([
   {
-    type: "MASS",
+    type: "sylo",
     volume: "2445.12",
     price: "1.164",
     parcent: "+1.62%",
-    up: 1,
+    up: 0,
   },
   {
-    type: "BTC",
+    type: "zig",
     volume: "2462",
     price: "24653.15",
     parcent: "+0.62%",
-    up: 1,
+    up: 0,
   },
   {
-    type: "ETH",
+    type: "wallet",
     volume: "2342",
     price: "1545.12",
     parcent: "-2.1%",
     up: 0,
   },
   {
-    type: "APE",
+    type: "hbb",
     volume: "34644",
     price: "2.2",
     parcent: "-2.2%",
     up: 0,
   },
   {
-    type: "SOL",
+    type: "kok",
     volume: "55445.12",
     price: "57.13",
     parcent: "-1.12%",
     up: 0,
   },
   {
-    type: "BSV",
+    type: "kct",
     volume: "20445.12",
     price: "64",
     parcent: "+1.62%",
     up: 1,
   },
   {
-    type: "MASS",
+    type: "smt",
     volume: "2445.12",
     price: "1.164",
     parcent: "+1.62%",
-    up: 1,
+    up: 0,
   },
   {
-    type: "BTC",
+    type: "baby",
     volume: "2462",
     price: "24653.15",
     parcent: "+0.62%",
-    up: 1,
+    up: 0,
   },
   {
-    type: "ETH",
+    type: "sc",
     volume: "2342",
     price: "1545.12",
     parcent: "-2.1%",
     up: 0,
   },
   {
-    type: "APE",
+    type: "arix",
     volume: "34644",
     price: "2.2",
     parcent: "-2.2%",
     up: 0,
   },
   {
-    type: "SOL",
+    type: "rly",
     volume: "55445.12",
     price: "57.13",
     parcent: "-1.12%",
     up: 0,
   },
   {
-    type: "BSV",
+    type: "velo",
     volume: "20445.12",
     price: "64",
     parcent: "+1.62%",
-    up: 1,
+    up:0,
   },
 ]);
+
+const getData = () => {
+  dataList.value.forEach(async item => {
+    const { data: res } = await getDetail(item.type);
+    item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
+    item.price = res.tick.close
+    item.volume = parseFloat(res.tick.amount).toFixed(2)
+    if(parseFloat(item.parcent)>0){
+      item.up=1
+    }
+  })
+};
+
+onMounted(() => {
+  getData()
+});
+
+setInterval(()=>{
+  getData()
+},1000*50)
 </script>
 
 <template>
@@ -100,15 +122,15 @@ const dataList = ref([
     </div>
     <div class="box" v-for="(item, index) in dataList" :key="index">
       <div class="div1">
-        <span>{{ item.type }}/USDT</span>
+        <span>{{ item.type.toUpperCase() }}/USDT</span>
         <p>24H量{{ item.volume }}</p>
       </div>
       <div style="text-align: center">
-        <span :class="item.up == 1 ? 'up' : 'down'">{{ item.price }}</span>
+        <span :class="item.up == 1 ? 'up' : 'down'">{{ parseFloat(item.price) }}</span>
       </div>
       <div style="text-align: right">
         <button :class="item.up == 1 ? 'up_btn' : 'down_btn'">
-          {{ item.parcent }}
+          {{ parseFloat(item.parcent).toFixed(2)}}%
         </button>
       </div>
     </div>

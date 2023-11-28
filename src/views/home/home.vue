@@ -115,7 +115,6 @@ const dealDataList = (item)=>{
 const getData = () => {
   tabList.value.forEach(async item => {
     const { data: res } = await getDetail(item.type);
-    console.log(res)
     item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
     item.price = res.tick.close
     item.price_cny = parseFloat(item.price).toFixed(2)*7

@@ -51,7 +51,6 @@ const typeList = ref([
 const getData = () => {
   typeList.value.forEach(async item => {
     const { data: res } = await getDetail(item.type);
-    console.log(res)
     item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
     item.price = res.tick.close
     if(parseFloat(item.parcent)>0){

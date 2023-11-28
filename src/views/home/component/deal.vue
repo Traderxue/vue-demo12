@@ -28,7 +28,6 @@ const typeList = ref([
 const getData = () => {
   typeList.value.forEach(async item => {
     const { data: res } = await getDetail(item.type);
-    console.log(res)
     item.parcent = ((parseFloat(res.tick.close)-parseFloat(res.tick.open))/parseFloat(res.tick.open)).toFixed(4)*100
     item.price = res.tick.close
     if(parseFloat(item.parcent)>0){
@@ -54,7 +53,7 @@ setInterval(()=>{
         <p>/USDT</p></span
       >
       <span class="span2" :class="item.up == 1 ? 'up' : 'down'">{{
-        parseFloat(item.price).toFixed(2)
+        parseFloat(item.price)
       }}</span>
       <span class="span3">
         <button :class="item.up == 1 ? 'up_btn' : 'down_btn'">

@@ -8,7 +8,7 @@ export const getDetail = (type) =>{                //获取币种详情
 
 export const getKline = (type,period) =>{
     return http({
-        url:`/market/history/kline?period=${period}&size=200&symbol=${type}usdt`
+        url:`/market/history/kline?period=${period}&size=10&symbol=${type}usdt`
     })
 }
 

@@ -22,10 +22,6 @@ const bannerList = ref({
   up: 0,
 });
 
-const changeTime = (item) => {
-  active.value = item.time;
-};
-
 const timeList = ref([
   {
     time: "1M",
@@ -89,23 +85,33 @@ const option = {
   },
 };
 
-const dataList = ref([]);
+const dataList = ref([
+  {
+    close: 4976.16,
+    high: 4977.99,
+    low: 4970.12,
+    open: 4972.89,
+    timestamp: 1587660000000,
+    volume: 204,
+  },
+]);
 
 const klineData = async () => {
   const { data: res } = await getKline(type, active.value);
-  res.data.forEach((item) => {
-    dataList.value.push(
-      {
-        close: item.close,
-        high: item.high,
-        low: item.low,
-        open: item.open,
-        timestamp: item.id,
-        volume: item.vol,
-      },
-    );
-  });
-  console.log(dataList.value)
+
+  dataList.value = res.data
+  console.log(res.data)
+
+//   res.data.forEach((item) => {
+//     dataList.push({
+//       close: item.close,
+//       high: item.high,
+//       low: item.low,
+//       open: item.open,
+//       timestamp: item.id,
+//       volume: item.vol,
+//     });
+//   });
 };
 
 onMounted(() => {
@@ -118,18 +124,12 @@ onMounted(() => {
   charts.setStyles(option);
 
   charts.applyNewData(dataList.value);
-
-  //   charts.applyNewData([
-  //     {
-  //       close: 4976.16,
-  //       high: 4977.99,
-  //       low: 4970.12,
-  //       open: 4972.89,
-  //       timestamp: 1587660000000,
-  //       volume: 204,
-  //     },
-  //   ]);
 });
+
+const changeTime = (item) => {
+  active.value = item.time;
+};
+
 </script>
 
 <template>

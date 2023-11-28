@@ -3,6 +3,10 @@ import { ref } from "vue";
 
 import { useRouter } from "vue-router";
 
+import { getDepth } from "@/api/coin.js";
+
+import { onMounted } from "vue";
+
 const showLeft = ref(false);
 
 const route = useRouter();
@@ -14,30 +18,15 @@ const activeBtn = ref("买入");
 const position = ref(true);
 
 const current = ref({
-  type: "BTC",
+  type: "btc",
   price: "23462",
   parcent: "1.6%",
   up: 1,
 });
 
-const leftData = ref([
-  {
-    price: "23441.5",
-    amount: "0.64",
-  },
-  {
-    price: "23451.5",
-    amount: "0.21",
-  },
-  {
-    price: "26085.5",
-    amount: "1.25",
-  },
-  {
-    price: "26485.5",
-    amount: "1.25",
-  },
-]);
+const bids = ref([]);
+
+const asks = ref([]);
 
 const buyBtn = ref([
   {
@@ -144,8 +133,22 @@ const changeCurrent = (item) => {
   current.value = item;
   showLeft.value = false;
 };
-</script>
 
+const getData = async () => {
+  const { data: res } = await getDepth(current.value.type);
+  console.log(res);
+  bids.value = res.tick.bids;
+  asks.value = res.tick.asks;
+};
+
+onMounted(() => {
+  getData();
+});
+
+setInterval(()=>{
+  getData()
+},2000)
+</script>
 
 <template>
   <div class="contract">
@@ -178,7 +181,7 @@ const changeCurrent = (item) => {
             </div>
           </div>
         </van-popup>
-        <span>{{ current.type }}/USDT</span>
+        <span>{{ current.type.toUpperCase() }}/USDT</span>
         <p :class="current.up == 1 ? 'up' : 'down'">{{ current.parcent }}</p>
       </div>
       <div>
@@ -192,14 +195,14 @@ const changeCurrent = (item) => {
           <span>数量</span>
         </div>
         <div class="box">
-          <div v-for="(item, index) in leftData" :key="index">
-            <span class="span1">{{ item.price }}</span
-            ><span>{{ item.amount }}</span>
+          <div v-for="(item, index) in bids" :key="index">
+            <span class="span1">{{ item[0] }}</span
+            ><span>{{ item[1] }}</span>
           </div>
-          <span class="mid">22013.1</span>
-          <div v-for="(item, index) in leftData" :key="index">
-            <span class="span2">{{ item.price }}</span
-            ><span>{{ item.amount }}</span>
+          <span class="mid">{{}}</span>
+          <div v-for="(item, index) in asks" :key="index">
+            <span class="span2">{{ item[0] }}</span
+            ><span>{{ item[1] }}</span>
           </div>
         </div>
       </div>

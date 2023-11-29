@@ -4,7 +4,7 @@ import i18n from "@/lang/index.js";
 import { useRouter } from "vue-router";
 import { getDetail } from "@/api/coin.js";
 
-const route = useRouter();
+const router = useRouter();
 
 const showLeft = ref(false);
 
@@ -109,7 +109,7 @@ const changeLang = (item) => {
 
 const dealDataList = (item)=>{
     active.value = item.title
-    route.push(item.path)
+    router.push(item.path)
 }
 
 const getData = () => {
@@ -123,6 +123,13 @@ const getData = () => {
     }
   })
 };
+
+const goChart = (item)=>{
+  router.push({
+    path:"/chart",
+    query:item
+  })
+}
 
 onMounted(()=>{
   getData()
@@ -203,7 +210,7 @@ setInterval(()=>{
       color="#f6f6f6"
     />
     <div class="tab">
-      <div v-for="(item, index) in tabList" :key="index">
+      <div v-for="(item, index) in tabList" :key="index" @click="goChart(item)">
         <span class="span1">{{ item.type.toUpperCase() }}/USDT</span>
         <span class="span2" :class="item.up == 1 ? 'up' : 'down'">{{
           parseFloat(item.price).toFixed(2)

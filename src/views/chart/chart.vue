@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getKline, getDetail } from "@/api/coin.js";
-import { init, dispose } from "klinecharts";
+import { init, dispose, registerIndicator } from "klinecharts";
 
 const router = useRouter();
 const route = useRoute();
@@ -19,7 +19,7 @@ const bannerList = ref({
   high: "",
   low: "",
   parcent: "",
-  up: 0,
+  up: "0",
 });
 
 const timeList = ref([
@@ -59,15 +59,15 @@ const goBack = () => {
 
 const getBannerData = async () => {
   const { data: res } = await getDetail(type);
-  bannerList.value.current = res.tick.close;
+  // bannerList.value.current = res.tick.close;
   bannerList.value.vol = parseFloat(res.tick.vol).toFixed(2);
   bannerList.value.high = res.tick.high;
   bannerList.value.low = res.tick.low;
-  bannerList.value.parcent =
-    ((res.tick.close - res.tick.open) / res.tick.open).toFixed(4) * 100;
-  if (parseFloat(bannerList.value.parcent) > 0) {
-    bannerList.value.up = 1;
-  }
+  // bannerList.value.parcent =
+  //   ((res.tick.close - res.tick.open) / res.tick.open).toFixed(4) * 100;
+  // if (parseFloat(bannerList.value.parcent) > 0) {
+  //   bannerList.value.up = 1;
+  // }
 };
 
 let charts;
@@ -83,53 +83,119 @@ const option = {
       dashedValue: [2, 2],
     },
   },
+  xAxis: {
+    show: true,
+    size: "auto",
+    // x轴线
+    axisLine: {
+      show: true,
+      color: "#888888",
+      size: 1,
+    },
+    // x轴分割文字
+    tickText: {
+      show: true,
+      color: "#888888",
+      family: "Helvetica Neue",
+      weight: "normal",
+      size: 12,
+      marginStart: 6,
+      marginEnd: 6,
+    },
+    // x轴分割线
+    tickLine: {
+      show: true,
+      size: 1,
+      length: 3,
+      color: "#888888",
+    },
+  },
+  yAxis: {
+    show: true,
+    size: "auto",
+    // 'left' | 'right'
+    position: "right",
+    // 'normal' | 'percentage' | 'log'
+    type: "normal",
+    inside: false,
+    reverse: false,
+    // y轴线
+    axisLine: {
+      show: true,
+      color: "#888",
+      size: 1,
+    },
+    // x轴分割文字
+    tickText: {
+      show: true,
+      color: "#888",
+      family: "Helvetica Neue",
+      weight: "normal",
+      size: 12,
+      marginStart: 6,
+      marginEnd: 6,
+    },
+    // x轴分割线
+    tickLine: {
+      show: true,
+      size: 1,
+      length: 5,
+      color: "#888",
+    },
+  },
+  separator: {
+    size: 1,
+    color: "#888",
+    fill: true,
+    activeBackgroundColor: "rgba(230, 230, 230, .15)",
+  },
 };
 
-const dataList = ref([
-  {
-    close: 4976.16,
-    high: 4977.99,
-    low: 4970.12,
-    open: 4972.89,
-    timestamp: 1587660000000,
-    volume: 204,
-  },
-]);
+const dataList = ref([]);
 
 const klineData = async () => {
   const { data: res } = await getKline(type, active.value);
-
-  dataList.value = res.data
-  console.log(res.data)
-
-//   res.data.forEach((item) => {
-//     dataList.push({
-//       close: item.close,
-//       high: item.high,
-//       low: item.low,
-//       open: item.open,
-//       timestamp: item.id,
-//       volume: item.vol,
-//     });
-//   });
+  const arr = res.data.reverse();
+  arr.forEach((item) => {
+    bannerList.value.current = item.close;
+    bannerList.value.parcent =
+      ((item.close - item.open) / item.open).toFixed(4) * 100;
+    if (parseFloat(bannerList.value.parcent) > 0) {
+      bannerList.value.up = 1;
+    }
+    return dataList.value.push({
+      close: item.close,
+      high: item.high,
+      low: item.low,
+      open: item.open,
+      timestamp: item.id * 1000,
+      volume: item.vol,
+    });
+  });
+  charts.applyNewData(dataList.value);
 };
 
 onMounted(() => {
   getBannerData();
   klineData();
-  console.log(route.query);
 
   charts = init(chart.value);
 
   charts.setStyles(option);
-
+  charts.createIndicator("VOL");
+  charts.setPriceVolumePrecision(4, 2);
   charts.applyNewData(dataList.value);
 });
 
 const changeTime = (item) => {
-  active.value = item.time;
+  active.value = item.period;
+  klineData();
+  charts.applyNewData(dataList.value);
 };
 
+setInterval(() => {
+  klineData();
+}, 5000);
 </script>
 
 <template>
@@ -142,7 +208,7 @@ const changeTime = (item) => {
       <span></span>
     </div>
     <div class="banner">
-      <div :class="bannerList.up == 1 ? 'up' : 'down'">
+      <div :class="bannerList.up == '1' ? 'up' : 'down'">
         <h3>{{ bannerList.current }}</h3>
         <p>{{ parseFloat(bannerList.parcent).toFixed(2) }}%</p>
       </div>
@@ -161,7 +227,7 @@ const changeTime = (item) => {
       <span
         v-for="(item, index) in timeList"
         :key="index"
-        :class="active == item.time ? 'active' : ''"
+        :class="active == item.period ? 'active' : ''"
         @click="changeTime(item)"
         >{{ item.time }}</span
       >

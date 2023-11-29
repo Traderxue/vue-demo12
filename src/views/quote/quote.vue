@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import { getDetail } from "@/api/coin.js";
 import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter()
 
 const dataList = ref([
   {
@@ -102,6 +104,13 @@ const getData = () => {
   })
 };
 
+const goChart = (item)=>{
+  router.push({
+    path:"/chart",
+    query:item
+  })
+}
+
 onMounted(() => {
   getData()
 });
@@ -120,7 +129,7 @@ setInterval(()=>{
       <span>名称</span><span style="text-align: center">最新价</span
       ><span style="text-align: right">涨跌幅</span>
     </div>
-    <div class="box" v-for="(item, index) in dataList" :key="index">
+    <div class="box" v-for="(item, index) in dataList" :key="index" @click="goChart(item)">
       <div class="div1">
         <span>{{ item.type.toUpperCase() }}/USDT</span>
         <p>24H量{{ item.volume }}</p>

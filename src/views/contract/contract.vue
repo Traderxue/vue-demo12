@@ -68,49 +68,49 @@ const positionList = ref([
 
 const listData = ref([
   {
-    type: "BTC",
+    type: "btc",
     price: "32465.12",
     parcent: "+1.4%",
     up: 1,
   },
   {
-    type: "ETH",
+    type: "eth",
     price: "1654.15",
     parcent: "-0.14%",
     up: 1,
   },
   {
-    type: "DOGE",
+    type: "doge",
     price: "0.0134",
     parcent: "+1.55%",
     up: 0,
   },
   {
-    type: "APE",
+    type: "ape",
     price: "3.14",
     parcent: "-1.8%",
     up: 0,
   },
   {
-    type: "BTC",
+    type: "btc",
     price: "32465.12",
     parcent: "+1.4%",
     up: 1,
   },
   {
-    type: "ETH",
+    type: "eth",
     price: "1654.15",
     parcent: "-0.14%",
     up: 0,
   },
   {
-    type: "DOGE",
+    type: "doge",
     price: "0.0134",
     parcent: "+1.55%",
     up: 1,
   },
   {
-    type: "APE",
+    type: "ape",
     price: "3.14",
     parcent: "-1.8%",
     up: 1,
@@ -170,7 +170,7 @@ setInterval(()=>{
               :key="index"
               @click="changeCurrent(item)"
             >
-              <span>{{ item.type }}/USDT</span>
+              <span>{{ item.type.toUpperCase() }}/USDT</span>
               <span :class="item.up == 1 ? 'up' : 'down'">{{
                 item.price
               }}</span>
